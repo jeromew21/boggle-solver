@@ -50,6 +50,7 @@ class Boggle:
         )
         Node = namedtuple("Node", ["coords", "character", "parent", "path"])
         size = 4
+        seen = []
         for y, row in enumerate(self.board):
             for x, character in enumerate(row):
                 queue = []
@@ -69,7 +70,9 @@ class Boggle:
                             while child:
                                 word = child.character + word
                                 child = child.parent
-                            yield word
+                            if word not in seen:
+                                seen.append(word)
+                                yield word
 
     def words(self):
         conn = sqlite3.connect(DB)
@@ -82,7 +85,7 @@ class Boggle:
         conn.commit()
         conn.close()
 
-if __name__ == "__main__":
+def test_average():
     num_words_observed = []
     for i in range(100):
         b = Boggle()
@@ -91,3 +94,11 @@ if __name__ == "__main__":
         print(f"Has {num_words} words")
         num_words_observed.append(num_words)
         print(f"Average: {sum(num_words_observed) / len(num_words_observed)}")
+
+if __name__ == "__main__":
+    b = Boggle()
+    b.show()
+    print("Loading words...")
+    words = list(b.words())
+    print(f"Found {len(words)} words.")
+    print(", ".join(words))
