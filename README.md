@@ -1,3 +1,3 @@
-# Boggle solver
+# Boggle
 
 Finds words in Boggle.
