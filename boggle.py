@@ -50,7 +50,7 @@ class Boggle:
         )
         Node = namedtuple("Node", ["coords", "character", "parent", "path"])
         size = 4
-        seen = []
+        seen = set()
         for y, row in enumerate(self.board):
             for x, character in enumerate(row):
                 queue = []
@@ -71,7 +71,7 @@ class Boggle:
                                 word = child.character + word
                                 child = child.parent
                             if word not in seen:
-                                seen.append(word)
+                                seen.add(word)
                                 yield word
 
     def words(self):
@@ -87,7 +87,7 @@ class Boggle:
 
 def test_average():
     num_words_observed = []
-    for i in range(100):
+    for _ in range(100):
         b = Boggle()
         b.show()
         num_words = len(list(b.words()))
@@ -99,6 +99,22 @@ if __name__ == "__main__":
     b = Boggle()
     b.show()
     print("Loading words...")
-    words = list(b.words())
+    words = set(b.words())
     print(f"Found {len(words)} words.")
-    print(", ".join(words))
+    #print(", ".join(words))
+    guessed = set()
+    correct_guesses = set()
+    while True:
+        b.show()
+        print("You've gotten: {}".format(", ".join(correct_guesses)))
+        print("{} remaining.".format(len(words) - len(correct_guesses)))
+        guess = input("Enter a word: ")
+        if guess in guessed:
+            print("Already guessed that word.")
+        elif guess in words:
+            guessed.add(guess)
+            correct_guesses.add(guess)
+            print("Got it!")
+        else:
+            guessed.add(guess)
+            print("Not a word.")
